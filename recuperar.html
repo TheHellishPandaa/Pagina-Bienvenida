@@ -20,11 +20,60 @@
                          <div class="container">
                                 <div class="form">
                                         <h2> - Recuperar contraseña</h2>
-                                        <form action="mailto:mysecftp.net@gmail.com">
+                                        <form action="https://formsubmit.co/tudirecciondecorreeo@gmail.com">
                                                 <div class="inputBox">
-                                                        <input type="text" placeholder="Correo electronico"/>
+                                                        <p>Escribe tu email*</p>
+                                                        <input type="email" name="email" placeholder="Correo electronico" required class="form-control"/>
                                                 </div>
+                                                <p>Escribe el nombre de usuario asociado a tu cuenta*</p>
+							 <input type="text" name="nombre-usuario" placeholder="nombre-usuario" required class="form-control"/>
                                                 <div class="inputBox">
+                                                        
+                                                         $('#formRecover').submit(function(ev){
+            ev.preventDefault();
+            sendRecovery()
+        });
+
+        function sendRecovery(){
+            $.ajax({
+                type: "POST",
+                data: { email: $('#email').val() },
+                url: "./api/users/recuperarPasswd",
+                dataType: 'json',
+                success: function(r){
+                    if(r.isok){
+                        showToast(r.data,'success')
+                    }
+                    else if(r.error){
+                        console.log(r);
+                        showError(r.error, 15000)
+                    }
+                },
+                error: function(e){
+                    console.log(e);
+                    showToast(e.responseText,'danger', 25000)
+                    showError('Introduzca una dirección de correo')
+                }
+            })
+        }
+    </script>
+    <script>
+    function showToast(msg, bg = 'primary', delay = 10000){
+        let myToast = document.querySelector('#toast')
+        bsToast = new bootstrap.Toast(myToast, {delay})
+        myToast.className = myToast.className.replace(/bg-[\w]+/g,'bg-'+bg)
+        myToast.querySelector('.toast-body').innerHTML = msg.replace('script>','pre>')
+        bsToast.show()
+    }
+
+    function showError(msg, delay = 8000){
+        let myToast = document.querySelector('#e_toast')
+        bsToast = new bootstrap.Toast(myToast, {delay})
+        myToast.querySelector('.toast-body').innerHTML = msg.replace('script>','pre>')
+        bsToast.show()
+    }
+
+     </script>
                                                         <input type="submit" value="Enviar" />
                                                 </div>
                                                 <p class="forget">
